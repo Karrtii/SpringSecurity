@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserResource {
 
     @GetMapping("/home")
-    public String showUser()
-    {
+    public String showUser() {
         return "application works";
     }
 }

@@ -12,32 +12,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JWTAuthorizationFilter extends OncePerRequestFilter
-{
-  private JWTTokenProvider jwtTokenProvider;
+public class JWTAuthorizationFilter extends OncePerRequestFilter {
+    private JWTTokenProvider jwtTokenProvider;
 
-  public JWTAuthorizationFilter(JWTTokenProvider jwtTokenProvider)
-  {
-    this.jwtTokenProvider = jwtTokenProvider;
-  }
+    public JWTAuthorizationFilter(JWTTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
-  @Override protected void doFilterInternal(
-      HttpServletRequest httpServletRequest,
-      HttpServletResponse httpServletResponse, FilterChain filterChain)
-      throws ServletException, IOException
-  {
-    if (httpServletRequest.getMethod().equalsIgnoreCase(SecurityConstant.OPTION_HTTP_METHOD))
-    {
-      httpServletResponse.setStatus(HttpStatus.OK.value());
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse, FilterChain filterChain)
+            throws ServletException, IOException {
+        if (httpServletRequest.getMethod().equalsIgnoreCase(SecurityConstant.OPTION_HTTP_METHOD)) {
+            httpServletResponse.setStatus(HttpStatus.OK.value());
+        } else {
+            String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+            if (authorizationHeader == null || authorizationHeader.startsWith(SecurityConstant.TOKEN_PREFIX)) {
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+                return;
+            }
+        }
     }
-    else
-    {
-      String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-      if(authorizationHeader == null || authorizationHeader.startsWith(SecurityConstant.TOKEN_PREFIX))
-      {
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
-        return;
-      }
-    }
-  }
 }
